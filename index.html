@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Affan 💗 Roohi | Wedding Countdown</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- GSAP -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+<!-- Canvas Confetti -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+  body {
+    background: linear-gradient(135deg, #ec4899, #9333ea);
+    overflow: hidden;
+    font-family: 'Poppins', sans-serif;
+  }
+  .heart {
+    position: fixed;
+    top: -20px;
+    font-size: 24px;
+    animation: fall linear infinite;
+    pointer-events: none;
+  }
+  @keyframes fall {
+    to { transform: translateY(110vh); opacity: 0; }
+  }
+  .highlight-date {
+    background: #f472b6;
+    color: white;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 5px;
+  }
+</style>
+</head>
+
+<body class="flex items-center justify-center min-h-screen text-white">
+
+<!-- OPENING HEART -->
+<div id="opening" class="fixed inset-0 flex items-center justify-center z-50">
+  <div class="text-8xl animate-pulse drop-shadow-lg">💖</div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div id="main" class="hidden w-full px-4">
+  <div class="max-w-lg mx-auto bg-white/20 backdrop-blur-xl rounded-3xl p-8 shadow-2xl text-center">
+    <h1 class="text-4xl font-bold mb-6 drop-shadow-lg">Wedding Countdown</h1>
+
+    <div class="grid grid-cols-4 gap-3 mb-6">
+      <div class="bg-white/30 rounded-xl p-3">
+        <span id="days" class="text-3xl font-bold">0</span>
+        <div class="text-sm">Days</div>
+      </div>
+      <div class="bg-white/30 rounded-xl p-3">
+        <span id="hours" class="text-3xl font-bold">0</span>
+        <div class="text-sm">Hours</div>
+      </div>
+      <div class="bg-white/30 rounded-xl p-3">
+        <span id="minutes" class="text-3xl font-bold">0</span>
+        <div class="text-sm">Minutes</div>
+      </div>
+      <div class="bg-white/30 rounded-xl p-3">
+        <span id="seconds" class="text-3xl font-bold">0</span>
+        <div class="text-sm">Seconds</div>
+      </div>
+    </div>
+
+    <!-- Islamic Nikah Date -->
+    <p class="text-lg mb-4">
+      📅 Islamic Nikah Date: <span class="highlight-date" id="nikahDate">15 November 2026</span>
+    </p>
+
+    <!-- Music Controls -->
+    <div class="flex justify-center gap-4 mb-3 flex-wrap">
+      <button id="playMusic" class="px-4 py-2 bg-pink-500 rounded-xl hover:bg-pink-600 transition">🎵 Play Music</button>
+      <button id="pauseMusic" class="px-4 py-2 bg-pink-500 rounded-xl hover:bg-pink-600 transition">⏸ Pause Music</button>
+    </div>
+
+    <p class="text-lg">Until Affan 💗 Roohi become one</p>
+  </div>
+</div>
+
+<!-- POPUP -->
+<div id="popup" class="fixed inset-0 bg-black/70 hidden items-center justify-center z-50">
+  <div class="bg-white text-gray-800 rounded-3xl p-8 text-center shadow-2xl max-w-sm">
+    <h2 class="text-3xl font-bold mb-2">Finally It’s Happening 💍</h2>
+    <p class="text-xl">Affan 💗 Roohi</p>
+    <p class="mt-2 text-gray-600">Alhamdulillah 🤍</p>
+    <button onclick="closePopup()" class="mt-6 px-6 py-2 bg-pink-500 text-white rounded-xl hover:bg-pink-600 transition">
+      Close
+    </button>
+  </div>
+</div>
+
+<!-- AUDIO -->
+<audio id="weddingMusic" loop>
+  <source src="affanroohi.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<script>
+  // OPENING ANIMATION
+  setTimeout(() => {
+    gsap.to("#opening", { opacity: 0, scale: 0, duration: 1 });
+    document.getElementById("opening").style.display = "none";
+    document.getElementById("main").classList.remove("hidden");
+    gsap.from("#main", { opacity: 0, y: 50, duration: 1 });
+  }, 2500);
+
+  // COUNTDOWN
+ const targetDate = new Date(2026, 10, 15, 0, 0, 0);
+  const timer = setInterval(() => {
+    const now = new Date();
+    const diff = targetDate - now;
+
+    if (diff <= 0) {
+      clearInterval(timer);
+      document.getElementById("days").innerText = 0;
+      document.getElementById("hours").innerText = 0;
+      document.getElementById("minutes").innerText = 0;
+      document.getElementById("seconds").innerText = 0;
+      openPopup(); // show popup only when countdown ends
+      return;
+    }
+
+    document.getElementById("days").innerText = Math.floor(diff / 86400000);
+    document.getElementById("hours").innerText = Math.floor(diff / 3600000) % 24;
+    document.getElementById("minutes").innerText = Math.floor(diff / 60000) % 60;
+    document.getElementById("seconds").innerText = Math.floor(diff / 1000) % 60;
+  }, 1000);
+
+  // FALLING HEARTS
+  setInterval(() => {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerText = "💗";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (Math.random() * 20 + 20) + "px";
+    heart.style.animationDuration = (Math.random() * 3 + 4) + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 7000);
+  }, 300);
+
+  // MUSIC CONTROLS
+  const music = document.getElementById("weddingMusic");
+  document.getElementById("playMusic").onclick = async () => {
+    try { await music.play(); } 
+    catch(err) { alert("Autoplay blocked! Tap play to start music 🎵"); }
+  };
+  document.getElementById("pauseMusic").onclick = () => music.pause();
+
+  // POPUP + CONFETTI
+  function openPopup() {
+    const popup = document.getElementById("popup");
+    popup.classList.remove("hidden");
+    popup.classList.add("flex");
+    gsap.from("#popup div", { scale: 0.7, opacity: 0, duration: 0.6 });
+
+    // Confetti celebration
+    const duration = 5 * 1000; // 5 seconds
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 999 };
+
+    function randomConfetti() {
+      confetti({
+        particleCount: 3,
+        angle: Math.random() * 60 + 60,
+        ...defaults,
+        origin: { x: Math.random(), y: Math.random() - 0.2 }
+      });
+      if (Date.now() < animationEnd) requestAnimationFrame(randomConfetti);
+    }
+    randomConfetti();
+  }
+
+  function closePopup() {
+    document.getElementById("popup").classList.add("hidden");
+  }
+</script>
+
+</body>
+</html>
